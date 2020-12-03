@@ -1,6 +1,5 @@
 <template>
-<div class="scene">
-  <div class="glowball"></div>
+<div v-if="gameList.length" class="scene">
   <div class="gamesContainer" :style='containerShift'>
     <GameItem v-for="game in gameList" :key="game.id" :id="game.id" 
       :name="game.name" :coverUrl="game.coverUrl" :totalGames="gameList.length" 
@@ -25,6 +24,12 @@ export default {
     GameItem
   },
   created() {
+    // If the list is already saved in memory
+    if (sessionStorage.getItem("gameList")) {
+      this.gameList = JSON.parse(sessionStorage.getItem("gameList"))
+    }
+
+    // Get auth code from url if available
     try {
       var authorizationCode = window.location.href.match(/code=(.*)/)[1]
       this.getAccessToken(authorizationCode)
@@ -121,6 +126,7 @@ export default {
         game.id = index
       }
       this.gameList = modifiedList
+      sessionStorage.setItem('gameList', JSON.stringify(this.gameList))
     },
     pickRandom() {
       var randomGame = this.gameList[Math.floor(Math.random() * this.gameList.length)];
