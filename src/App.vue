@@ -11,7 +11,6 @@
 <a class="button" href="https://vglist.co/settings/oauth/authorize?client_id=zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE&redirect_uri=https://tolocalhost.com&response_type=code&scope=read">
   Authorize
 </a>
-<button class="button" @click="getAccessToken">Get List</button>
 <button class="button" @click="pickRandom">Random</button>
 </template>
 
@@ -24,6 +23,14 @@ export default {
   name: 'App',
   components: {
     GameItem
+  },
+  created() {
+    try {
+      var authorizationCode = window.location.href.match(/code=(.*)/)[1]
+      this.getAccessToken(authorizationCode)
+    } catch (e) {
+      console.log("No authorization code found in url")
+    }
   },
   data() {
     return {
@@ -45,9 +52,7 @@ export default {
     }
   },
   methods: {
-    getAccessToken() {
-      var authorizationCode = window.location.href.match(/code=(.*)/)[1]
-      
+    getAccessToken(authorizationCode) {
       var url = 'https://vglist.co/settings/oauth/token',
         options = {
           method: 'POST',
@@ -64,11 +69,16 @@ export default {
 
       fetch(url, options)
         .then(response => response.json())
-        .then(data => this.setAccessToken(data.access_token))
+        .then(data => this.setAccessToken(data))
     },
-    setAccessToken(token) {
-      this.accessToken = token
-      this.getUserList()
+    setAccessToken(data) {
+      if (!data.error) {
+        this.accessToken = data.access_token
+        this.getUserList()
+      }
+      else {
+        console.log("Invalid authorization token")
+      }
     },
     getUserList() {
       var query = `
