@@ -72,8 +72,8 @@ export default {
     },
     getUserList() {
       var query = `
-        query ($username: String) { 
-          user(username: $username) {
+        query { 
+          currentUser {
             gamePurchases {
               nodes {
                 game {
@@ -87,10 +87,6 @@ export default {
         }
       `
 
-      var variables = {
-        username: 'premeditator'
-      }
-
       var url = 'https://vglist.co/graphql',
         options = {
           method: 'POST',
@@ -100,15 +96,14 @@ export default {
             'Accept': 'application/json',
           },
           body: JSON.stringify({
-            query: query,
-            variables: variables
+            query: query
           })
       }
 
       // Make the HTTP Api request
       fetch(url, options)
         .then(response => response.json())
-        .then(data => this.renderUserList(data.data.user.gamePurchases.nodes))
+        .then(data => this.renderUserList(data.data.currentUser.gamePurchases.nodes))
     },
     renderUserList(list) {
       var modifiedList = list.map(item => item.game)
