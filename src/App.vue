@@ -1,5 +1,9 @@
 <template>
+
 <div v-if="gameList.length" class="scene">
+  <transition name="fade">
+    <div v-if="resultShowing" class="rays"></div>
+  </transition>
   <div class="gamesContainer" :style='containerShift'>
     <GameItem v-for="game in gameList" :key="game.id" :id="game.id" 
       :name="game.name" :coverUrl="game.coverUrl" :totalGames="gameList.length" 
@@ -7,10 +11,14 @@
     </GameItem>
   </div>
 </div>
-<a class="button" href="https://vglist.co/settings/oauth/authorize?client_id=zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE&redirect_uri=https://tolocalhost.com&response_type=code&scope=read">
-  Authorize
-</a>
-<button class="button" @click="pickRandom">Random</button>
+
+<div class="controls">
+  <a class="button" href="https://vglist.co/settings/oauth/authorize?client_id=zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE&redirect_uri=https://tolocalhost.com&response_type=code&scope=read">
+    Authorize
+  </a>
+  <button class="button is-info is-large" @click="pickRandom">SPIN</button>
+</div>
+
 </template>
 
 <script>
@@ -42,7 +50,8 @@ export default {
       accessToken: null,
       gameList: [],
       rotateAngle: 0, // Angle to rotate
-      oddRotateNum: 0 // Used to include and exclude a rotation offset
+      oddRotateNum: 0, // Used to include and exclude a rotation offset
+      resultShowing: false
     }
   },
   computed: {
@@ -129,17 +138,36 @@ export default {
       sessionStorage.setItem('gameList', JSON.stringify(this.gameList))
     },
     pickRandom() {
+      this.resultShowing = false
+
       var randomGame = this.gameList[Math.floor(Math.random() * this.gameList.length)];
       console.log(randomGame.name)
       // The rotation offset spins it around a couple times
       this.oddRotateNum = !this.oddRotateNum
       this.rotateAngle = -((360*6*this.oddRotateNum) + (randomGame.id * this.angleDelta))
+
+      window.setTimeout(this.setResult, 15000)
+    },
+    setResult() {
+      this.resultShowing = true
     }
   }
 }
 </script>
 
 <style>
+html {
+  height: 100%;
+}
+body {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(198,195,249);
+  background: linear-gradient(60deg, rgba(198,195,249,1) 40%, rgba(35,182,255,1) 80%);
+}
+
 #app {
   text-align: center;
 }
@@ -156,7 +184,37 @@ export default {
   position: relative;
   width: 400px;
   height: 400px;
-  margin: 80px auto;
+  margin: auto;
   perspective: 500px;
+}
+
+/* keyframes for animation;  simple 0 to 360 */
+@keyframes spin {
+	from { transform: rotate(0deg) scale(2); }
+	to { transform: rotate(360deg) scale(2); }
+}
+
+.rays	{ /* with animation properties */
+	background: url('./assets/rays-main.png') no-repeat center; 
+	position: absolute;
+  height: 100%;
+  width: 100%;
+
+  animation-name: spin; 
+	animation-duration: 40000ms; /* 40 seconds */
+	animation-iteration-count: infinite; 
+	animation-timing-function: linear;
+}
+
+.fade-enter-active {
+  transition: all .6s ease-in
+}
+.fade-leave-active {
+  transition: all .3s ease-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
