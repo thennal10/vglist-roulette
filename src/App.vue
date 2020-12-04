@@ -5,8 +5,8 @@
     <div v-if="resultShowing" class="rays"></div>
   </transition>
   <div class="gamesContainer" :style='containerShift'>
-    <GameItem v-for="game in gameList" :key="game.id" :id="game.id" 
-      :name="game.name" :coverUrl="game.coverUrl" :totalGames="gameList.length" 
+    <GameItem v-for="game in gameList" :key="game.index" :index="game.index" :id="game.id" 
+      :name="game.name" :coverUrl="game.coverUrl" :totalGames="gameList.length"
       :radius="radius" :rotateAngle="rotateAngle">
     </GameItem>
   </div>
@@ -101,6 +101,7 @@ export default {
             gamePurchases {
               nodes {
                 game {
+                  id
                   name
                   coverUrl
                 }
@@ -132,7 +133,7 @@ export default {
     renderUserList(list) {
       var modifiedList = list.map(item => item.game)
       for (const [index, game] of modifiedList.entries()) {
-        game.id = index
+        game.index = index
       }
       this.gameList = modifiedList
       sessionStorage.setItem('gameList', JSON.stringify(this.gameList))
@@ -144,7 +145,7 @@ export default {
       console.log(randomGame.name)
       // The rotation offset spins it around a couple times
       this.oddRotateNum = !this.oddRotateNum
-      this.rotateAngle = -((360*6*this.oddRotateNum) + (randomGame.id * this.angleDelta))
+      this.rotateAngle = -((360*6*this.oddRotateNum) + (randomGame.index * this.angleDelta))
 
       window.setTimeout(this.setResult, 15000)
     },

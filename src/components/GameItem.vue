@@ -1,7 +1,9 @@
 <template>
   <div class="container is-align-items-center is-flex" :style="style" >
-    <img v-if="coverUrl" :src="'https://vglist.co' + coverUrl">
-    <p v-else class="has-text-centered is-size-2"><strong>{{name}}</strong></p>
+    <a :href="'https://vglist.co/games/' + id">
+      <img v-if="coverUrl" :src="'https://vglist.co' + coverUrl">
+      <p v-else class="has-text-centered is-size-2"><strong>{{name}}</strong></p>
+    </a>
   </div>
 </template>
 
@@ -9,6 +11,7 @@
 export default {
   name: 'GameItem',
   props: {
+    index: Number,
     id: Number,
     name: String,
     coverUrl: String,
@@ -18,7 +21,7 @@ export default {
   },
   computed: {
     angle () {
-      return (this.id * 360)/this.totalGames
+      return (this.index * 360)/this.totalGames
     },
     style () {
       return 'transform: rotateY(' + (this.angle + this.rotateAngle) + 
@@ -38,10 +41,19 @@ export default {
     transition: transform 15s cubic-bezier(.2,-0.05,0,1);
   }
 
+  a {
+    height: 100%; /* So that object-fit: contain works */
+  }
+  
   img {
     height: 100%;
     width: 100%;
     object-fit: contain;
+    transition: transform 0.4s ease-out
+  }
+
+  img:hover {
+    transform: scale3d(1.1, 1.1, 1.1);
   }
 
   p {
