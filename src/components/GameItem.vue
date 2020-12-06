@@ -19,15 +19,16 @@ export default {
     coverUrl: String,
     totalGames: Number,
     radius: Number,
-    rotateAngle: Number
+    rotateAngle: Number,
+    rotateTime: Number 
   },
   computed: {
     angle () {
       return (this.index * 360)/this.totalGames
     },
     style () {
-      return 'transform: rotateY(' + (this.angle + this.rotateAngle) + 
-        'deg) translateZ(' + this.radius + 'px);' //+
+      return `transform: rotateY(${this.angle + this.rotateAngle}deg) translateZ(${this.radius}px);
+        transition: transform ${this.rotateTime}s cubic-bezier(.2,-0.05,0,1);`
         //'background : hsla(' + this.angle + ', 100%, 50%, 0.8)'
     }
   }
@@ -39,7 +40,6 @@ export default {
     position: absolute;
     width: 100%;
     height: 100%;
-    transition: transform 15s cubic-bezier(.2,-0.05,0,1);
   }
 
   a {

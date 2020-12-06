@@ -5,18 +5,21 @@
     <div v-if="resultShowing" class="rays"></div>
   </transition>
   <div class="gamesContainer" :style='containerShift'>
-    <GameItem v-for="game in gameList" :key="game.index" :index="game.index" :id="game.id" 
-      :name="game.name" :coverUrl="game.coverUrl" :totalGames="gameList.length"
-      :radius="radius" :rotateAngle="rotateAngle">
+    <GameItem v-for="game in filteredGameList" :key="game.index" :index="game.index" :id="game.id" 
+      :name="game.name" :coverUrl="game.coverUrl" :totalGames="filteredGameList.length"
+      :radius="radius" :rotateAngle="rotateAngle" :rotateTime="rotateTime">
     </GameItem>
   </div>
 </div>
 
 <div class="controls">
+  <input type="checkbox" v-model="speedy" />
   <a class="button" href="https://vglist.co/settings/oauth/authorize?client_id=zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE&redirect_uri=https://tolocalhost.com&response_type=code&scope=read">
     Authorize
   </a>
   <button class="button is-info is-large" @click="pickRandom">SPIN</button>
+  <input type="checkbox" v-model="unplayedOnly" />
+  <input type="checkbox" v-model="noCompleted" />
 </div>
 
 </template>
@@ -48,21 +51,36 @@ export default {
   data() {
     return {
       accessToken: null,
-      gameList: [],
+      gameList: [], // Contains all games, unfiltered
       rotateAngle: 0, // Angle to rotate
       oddRotateNum: 0, // Used to include and exclude a rotation offset
-      resultShowing: false
+      resultShowing: false,
+      spinning: false,
+      speedy: false,
+      unplayedOnly: false,
+      noCompleted: false
     }
   },
   computed: {
+    filteredGameList() { // Filtered games, used for most things
+      var filteredList = this.gameList.filter(this.gameListFilter)
+      // Just updates the indexes for calculating new rotations
+      for (const [index, game] of filteredList.entries()) {
+        game.index = index
+      }
+      return filteredList
+    },
     angleDelta() {
-      return 360 / this.gameList.length
+      return 360 / this.filteredGameList.length
     },
     radius() {
       return (SIZE + GAP) / Math.tan((Math.PI/180) * (this.angleDelta/2))
     },
     containerShift() {
       return 'transform: translateZ('+ (-this.radius) +'px);'
+    },
+    rotateTime() {
+      return this.spinning ? (this.speedy ? 1 : 15) : 0
     }
   },
   methods: {
@@ -130,26 +148,33 @@ export default {
         .then(response => response.json())
         .then(data => this.renderUserList(data.data.currentUser.gamePurchases.nodes))
     },
+    gameListFilter(game) { // Returns a comparison used for filtering
+      const unplayedComparison = this.unplayedOnly && game.completionStatus != "UNPLAYED"
+      const completedComparison = this.noCompleted && (game.completionStatus == "COMPLETED" || game.completionStatus == "FULLY_COMPLETED")
+      return !(unplayedComparison || completedComparison)
+    },
     renderUserList(list) {
-      var modifiedList = list.map(item => item.game)
-      for (const [index, game] of modifiedList.entries()) {
-        game.index = index
-      }
-      this.gameList = modifiedList
+      this.gameList = list.map(function(item, index) {
+        item.game.completionStatus = item.completionStatus
+        item.game.index = index
+        return item.game
+      })
       sessionStorage.setItem('gameList', JSON.stringify(this.gameList))
     },
     pickRandom() {
       this.resultShowing = false
-
-      var randomGame = this.gameList[Math.floor(Math.random() * this.gameList.length)];
-      console.log(randomGame.name)
+      this.spinning = true
+      
+      var randomGame = this.filteredGameList[Math.floor(Math.random() * this.filteredGameList.length)];
+      
       // The rotation offset spins it around a couple times
       this.oddRotateNum = !this.oddRotateNum
       this.rotateAngle = -((360*6*this.oddRotateNum) + (randomGame.index * this.angleDelta))
 
-      window.setTimeout(this.setResult, 15000)
+      window.setTimeout(this.setResult, this.rotateTime * 1000)
     },
     setResult() {
+      this.spinning = false
       this.resultShowing = true
     }
   }
@@ -189,6 +214,11 @@ body {
   perspective: 500px;
 }
 
+/* To prevent the rays overlaying it */
+input {
+  position: relative;
+  z-index: 1;
+}
 /* keyframes for animation;  simple 0 to 360 */
 @keyframes spin {
 	from { transform: rotate(0deg) scale(2); }
