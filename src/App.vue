@@ -13,13 +13,18 @@
 </div>
 
 <div class="controls">
-  <input type="checkbox" v-model="speedy" />
+  <label for="speedup">Speed up roulette</label>
+  <input type="checkbox" id="speedup" v-model="speedy" />
   <a class="button" href="https://vglist.co/settings/oauth/authorize?client_id=zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE&redirect_uri=https://tolocalhost.com&response_type=code&scope=read">
     Authorize
   </a>
   <button class="button is-info is-large" @click="pickRandom">SPIN</button>
-  <input type="checkbox" v-model="unplayedOnly" />
-  <input type="checkbox" v-model="noCompleted" />
+  
+  <input type="checkbox" id="unplayedfilter" v-model="unplayedOnly" />
+  <label for="unplayedfilter">Only unplayed</label>
+  
+  <input type="checkbox" id="completedfilter" v-model="noCompleted" />
+  <label for="completedfilter">No completed</label>
 </div>
 
 </template>
@@ -217,8 +222,8 @@ body {
 /* To prevent the rays overlaying it */
 input {
   position: relative;
-  z-index: 1;
 }
+
 /* keyframes for animation;  simple 0 to 360 */
 @keyframes spin {
 	from { transform: rotate(0deg) scale(2); }
@@ -228,6 +233,7 @@ input {
 .rays	{ /* with animation properties */
 	background: url('./assets/rays-main.png') no-repeat center; 
 	position: absolute;
+  z-index: -1;
   height: 100%;
   width: 100%;
 
