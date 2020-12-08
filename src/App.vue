@@ -1,30 +1,42 @@
 <template>
+<div v-if="gameList.length">
+  <div class="scene">
+    <transition name="fade">
+      <div v-if="resultShowing" class="rays"></div>
+    </transition>
+    <div class="gamesContainer" :style='containerShift'>
+      <GameItem v-for="game in filteredGameList" :key="game.index" :index="game.index" :id="game.id" 
+        :name="game.name" :coverUrl="game.coverUrl" :totalGames="filteredGameList.length"
+        :radius="radius" :rotateAngle="rotateAngle" :rotateTime="rotateTime">
+      </GameItem>
+    </div>
+  </div>
 
-<div v-if="gameList.length" class="scene">
-  <transition name="fade">
-    <div v-if="resultShowing" class="rays"></div>
-  </transition>
-  <div class="gamesContainer" :style='containerShift'>
-    <GameItem v-for="game in filteredGameList" :key="game.index" :index="game.index" :id="game.id" 
-      :name="game.name" :coverUrl="game.coverUrl" :totalGames="filteredGameList.length"
-      :radius="radius" :rotateAngle="rotateAngle" :rotateTime="rotateTime">
-    </GameItem>
+  <div class="controls buttons has-addons">
+    <label for="speedup" :class="'button is-success ' + (!speedy ? 'is-light': '')">Speed up roulette</label>
+    <input type="checkbox" id="speedup" v-model="speedy" />
+    
+    <a class="button" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
+      Get List
+    </a>
+
+    <button class="button is-info is-large" @click="pickRandom">SPIN</button>
+    
+    <input type="checkbox" id="unplayedfilter" v-model="unplayedOnly" />
+    <label for="unplayedfilter" :class="'button is-warning ' + (!unplayedOnly ? 'is-light': '')">Only unplayed</label>
+    
+    <input type="checkbox" id="completedfilter" v-model="noCompleted" />
+    <label for="completedfilter" :class="'button is-primary ' + (!noCompleted ? 'is-light': '')">No completed</label>
   </div>
 </div>
-
-<div class="controls">
-  <label for="speedup">Speed up roulette</label>
-  <input type="checkbox" id="speedup" v-model="speedy" />
-  <a class="button" href="https://vglist.co/settings/oauth/authorize?client_id=zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE&redirect_uri=https://tolocalhost.com&response_type=code&scope=read">
-    Authorize
+<div v-else>
+  <figure>
+    <img src="./assets/vglist-logo.svg">
+  </figure>
+  <p class="title">Connect your vglist account, and spin the wheel!</p>
+  <a class="button is-info is-light is-large" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
+    <strong>Connect</strong>
   </a>
-  <button class="button is-info is-large" @click="pickRandom">SPIN</button>
-  
-  <input type="checkbox" id="unplayedfilter" v-model="unplayedOnly" />
-  <label for="unplayedfilter">Only unplayed</label>
-  
-  <input type="checkbox" id="completedfilter" v-model="noCompleted" />
-  <label for="completedfilter">No completed</label>
 </div>
 
 </template>
@@ -55,6 +67,7 @@ export default {
   },
   data() {
     return {
+      client_id: 'zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE',
       accessToken: null,
       gameList: [], // Contains all games, unfiltered
       rotateAngle: 0, // Angle to rotate
@@ -105,7 +118,7 @@ export default {
           },
           body: JSON.stringify({
             grant_type: 'authorization_code',
-            client_id: 'zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE',
+            client_id: this.client_id,
             code: authorizationCode,
             redirect_uri: 'https://tolocalhost.com'
           })
@@ -237,6 +250,7 @@ body {
 /* To prevent the rays overlaying it */
 input {
   position: relative;
+  display: none;
 }
 
 /* keyframes for animation;  simple 0 to 360 */
