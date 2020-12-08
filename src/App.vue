@@ -13,7 +13,7 @@
   </div>
 
   <div class="controls buttons has-addons">
-    <label for="speedup" :class="'button is-success ' + (!speedy ? 'is-light': '')">Speed up roulette</label>
+    <label for="speedup" :class="'button is-success ' + (speedy ? '' : 'is-light')">Speed up roulette</label>
     <input type="checkbox" id="speedup" v-model="speedy" />
     
     <a class="button" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
@@ -23,10 +23,10 @@
     <button class="button is-info is-large" @click="pickRandom">SPIN</button>
     
     <input type="checkbox" id="unplayedfilter" v-model="unplayedOnly" />
-    <label for="unplayedfilter" :class="'button is-warning ' + (!unplayedOnly ? 'is-light': '')">Only unplayed</label>
+    <label for="unplayedfilter" :class="'button is-warning ' + (unplayedOnly ? '' : 'is-light')">Only unplayed</label>
     
     <input type="checkbox" id="completedfilter" v-model="noCompleted" />
-    <label for="completedfilter" :class="'button is-primary ' + (!noCompleted ? 'is-light': '')">No completed</label>
+    <label for="completedfilter" :class="'button is-primary ' + (noCompleted ? '' : 'is-light')">No completed</label>
   </div>
 </div>
 <div v-else>
@@ -43,8 +43,6 @@
 
 <script>
 import GameItem from './components/GameItem.vue'
-const SIZE = 200
-const GAP = 30
 
 export default {
   name: 'App',
@@ -64,6 +62,9 @@ export default {
     } catch (e) {
       console.log("No authorization code found in url")
     }
+
+    // Updates window width on resize
+    window.addEventListener('resize', () => {this.windowWidth = window.innerWidth})
   },
   data() {
     return {
@@ -72,6 +73,7 @@ export default {
       gameList: [], // Contains all games, unfiltered
       rotateAngle: 0, // Angle to rotate
       oddRotateNum: 0, // Used to include and exclude a rotation offset
+      windowWidth: 0, // Just stores the current width
       resultShowing: false,
       spinning: false,
       speedy: false,
@@ -95,11 +97,17 @@ export default {
       }
       return filteredList
     },
+    gameSize() { // Half of actual size, set in scene
+      return this.windowWidth > 768 ? 200 : 100 
+    },
+    gameGap() { // Between two games
+      return this.windowWidth > 768 ? 30 : 10
+    },
     angleDelta() {
       return 360 / this.filteredGameList.length
     },
     radius() {
-      return (SIZE + GAP) / Math.tan((Math.PI/180) * (this.angleDelta/2))
+      return (this.gameSize + this.gameGap) / Math.tan((Math.PI/180) * (this.angleDelta/2))
     },
     containerShift() {
       return 'transform: translateZ('+ (-this.radius) +'px);'
@@ -239,12 +247,24 @@ body {
   transition: transform 1s;
 }
 
-.scene {
-  position: relative;
-  width: 400px;
-  height: 400px;
-  margin: auto;
-  perspective: 500px;
+@media (min-width: 768px) {
+  .scene {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: auto;
+    perspective: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .scene {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: auto;
+    perspective: 500px;
+  }
 }
 
 /* To prevent the rays overlaying it */
