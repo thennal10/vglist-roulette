@@ -68,7 +68,14 @@ export default {
   },
   computed: {
     filteredGameList() { // Filtered games, used for most things
+      // Apply filter
       var filteredList = this.gameList.filter(this.gameListFilter)
+
+      // For when the user more than x games, because the renderer doesn't handle too many well
+      if (filteredList.length > 30) {
+        filteredList = reduceToSize(30, filteredList)
+      }
+
       // Just updates the indexes for calculating new rotations
       for (const [index, game] of filteredList.entries()) {
         game.index = index
@@ -183,6 +190,14 @@ export default {
       this.resultShowing = true
     }
   }
+}
+
+function reduceToSize(size, list) {
+  const ogLen = list.length
+  for (let i = 0; i < ogLen - size; i++) {
+    list.splice(Math.floor(Math.random() * (list.length - i + 1)), 1)
+  }
+  return list
 }
 </script>
 
