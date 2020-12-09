@@ -1,4 +1,5 @@
 <template>
+<p class="title is-size-1 mb-6 has-text-white">vglist roulette</p>
 <div v-if="gameList.length" class="container">
   <div class="scene">
     <transition name="fade">
@@ -12,7 +13,7 @@
     </div>
   </div>
 
-  <div class="controls columns is-vcentered">
+  <div class="controls columns is-vcentered mt-6">
     <div class="column is-hidden-mobile">
       <div class="buttons has-addons is-right">
         <a class="button">Get new set of games</a>
@@ -31,22 +32,14 @@
 
     <div class="column is-hidden-mobile">
       <div class="buttons has-addons is-left">
-        <label for="speedup" :class="'button is-success ' + (speedy ? '' : 'is-light')">Speed up</label>
-        <input type="checkbox" id="speedup" v-model="speedy" />
-        
-        <input type="checkbox" id="unplayedfilter" v-model="unplayedOnly" />
-        <label for="unplayedfilter" :class="'button is-warning ' + (unplayedOnly ? '' : 'is-light')">Only unplayed</label>
-        
-        <input type="checkbox" id="completedfilter" v-model="noCompleted" />
-        <label for="completedfilter" :class="'button is-primary ' + (noCompleted ? '' : 'is-light')">No completed</label>
+        <FilterButton id="speedy-filter" text="Speed Up" colorClass="success" v-model:checked="speedy" />
+        <FilterButton id="unplayed-filter" text="Only Unplayed" colorClass="warning" v-model:checked="unplayedOnly" />
+        <FilterButton id="completed-filter" text="No Completed" colorClass="primary" v-model:checked="noCompleted" :endButton="true"/>
       </div>
     </div>
   </div>
 </div>
 <div v-else>
-  <figure>
-    <img src="./assets/vglist-logo.svg">
-  </figure>
   <p class="title">Connect your vglist account, and spin the wheel!</p>
   <a class="button is-info is-light is-large" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
     <strong>Connect</strong>
@@ -57,11 +50,13 @@
 
 <script>
 import GameItem from './components/GameItem.vue'
+import FilterButton from './components/FilterButton.vue'
 
 export default {
   name: 'App',
   components: {
-    GameItem
+    GameItem,
+    FilterButton
   },
   created() {
     // If the list is already saved in memory
@@ -280,12 +275,6 @@ body {
     margin: auto;
     perspective: 500px;
   }
-}
-
-/* To prevent the rays overlaying it */
-input {
-  position: relative;
-  display: none;
 }
 
 /* keyframes for animation;  simple 0 to 360 */
