@@ -28,7 +28,7 @@ export default {
     },
     style () {
       return `transform: rotateY(${this.angle + this.rotateAngle}deg) translateZ(${this.radius}px);
-        transition: transform ${this.rotateTime}s cubic-bezier(.2,-0.05,0,1);`
+        transition: transform ${this.rotateTime }s cubic-bezier(.2,-0.05,0,1);`
         //'background : hsla(' + this.angle + ', 100%, 50%, 0.8)'
     }
   }

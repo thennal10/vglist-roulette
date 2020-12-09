@@ -1,5 +1,5 @@
 <template>
-<div v-if="gameList.length">
+<div v-if="gameList.length" class="container">
   <div class="scene">
     <transition name="fade">
       <div v-if="resultShowing" class="rays"></div>
@@ -12,21 +12,35 @@
     </div>
   </div>
 
-  <div class="controls buttons has-addons">
-    <label for="speedup" :class="'button is-success ' + (speedy ? '' : 'is-light')">Speed up roulette</label>
-    <input type="checkbox" id="speedup" v-model="speedy" />
-    
-    <a class="button" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
-      Get List
-    </a>
+  <div class="controls columns is-vcentered">
+    <div class="column is-hidden-mobile">
+      <div class="buttons has-addons is-right">
+        <a class="button">Get new set of games</a>
 
-    <button class="button is-info is-large" @click="pickRandom">SPIN</button>
-    
-    <input type="checkbox" id="unplayedfilter" v-model="unplayedOnly" />
-    <label for="unplayedfilter" :class="'button is-warning ' + (unplayedOnly ? '' : 'is-light')">Only unplayed</label>
-    
-    <input type="checkbox" id="completedfilter" v-model="noCompleted" />
-    <label for="completedfilter" :class="'button is-primary ' + (noCompleted ? '' : 'is-light')">No completed</label>
+        <a class="button">About</a>
+
+        <a class="button" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
+          Get List
+        </a>
+      </div>
+    </div>
+
+    <div class="column is-1">
+      <button class="button is-info is-large" @click="pickRandom">SPIN</button>
+    </div>
+
+    <div class="column is-hidden-mobile">
+      <div class="buttons has-addons is-left">
+        <label for="speedup" :class="'button is-success ' + (speedy ? '' : 'is-light')">Speed up</label>
+        <input type="checkbox" id="speedup" v-model="speedy" />
+        
+        <input type="checkbox" id="unplayedfilter" v-model="unplayedOnly" />
+        <label for="unplayedfilter" :class="'button is-warning ' + (unplayedOnly ? '' : 'is-light')">Only unplayed</label>
+        
+        <input type="checkbox" id="completedfilter" v-model="noCompleted" />
+        <label for="completedfilter" :class="'button is-primary ' + (noCompleted ? '' : 'is-light')">No completed</label>
+      </div>
+    </div>
   </div>
 </div>
 <div v-else>
@@ -73,7 +87,7 @@ export default {
       gameList: [], // Contains all games, unfiltered
       rotateAngle: 0, // Angle to rotate
       oddRotateNum: 0, // Used to include and exclude a rotation offset
-      windowWidth: 0, // Just stores the current width
+      windowWidth: window.innerWidth, // Just stores the current width
       resultShowing: false,
       spinning: false,
       speedy: false,
@@ -237,6 +251,7 @@ body {
 
 #app {
   text-align: center;
+  width: 100%;
 }
 
 .gamesContainer {
@@ -280,7 +295,8 @@ input {
 }
 
 .rays	{ /* with animation properties */
-	background: url('./assets/rays-main.png') no-repeat center; 
+	background: url('./assets/rays-main.png') no-repeat center;
+  background-size: contain;
 	position: absolute;
   z-index: -1;
   height: 100%;
