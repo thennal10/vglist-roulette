@@ -1,7 +1,9 @@
 <template>
 <p class="is-size-1 mb-6 has-text-white"><b>vg</b>list roulette</p>
 <div v-if="gameList.length" class="container">
-  <Spinner :renderList="filteredGameList" :speedy="speedy" ref="spinner" />
+  <Spinner v-if="filteredGameList.length" :renderList="filteredGameList" 
+    :speedy="speedy" ref="spinner" />
+  <p v-else class="is-size-3 has-text-white">No games in your library match the filters currently activated :(</p>
   <div class="columns is-vcentered mt-6">
     <div class="column is-hidden-mobile">
       <div class="buttons has-addons is-right">
