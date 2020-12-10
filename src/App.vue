@@ -2,9 +2,7 @@
 <p class="is-size-1 mb-6 has-text-white"><b>vg</b>list roulette</p>
 <div v-if="gameList.length" class="container">
   <div class="scene">
-    <transition name="fade">
-      <div v-if="showRays" class="rays"></div>
-    </transition>
+    <Rays :showRays="showRays" />
     <div class="gamesContainer" :style='containerShift'>
       <GameItem v-for="game in filteredGameList" :key="game.index" :index="game.index" :id="game.id" 
         :name="game.name" :coverUrl="game.coverUrl" :totalGames="filteredGameList.length"
@@ -61,12 +59,14 @@
 <script>
 import GameItem from './components/GameItem'
 import FiltersContainer from './components/FiltersContainer'
+import Rays from './components/Rays'
 
 export default {
   name: 'App',
   components: {
     GameItem,
-    FiltersContainer
+    FiltersContainer,
+    Rays
   },
   created() {
     // If the list is already saved in memory
@@ -201,14 +201,14 @@ export default {
       // Make the HTTP Api request
       fetch(url, options)
         .then(response => response.json())
-        .then(data => this.renderUserList(data.data.currentUser.gamePurchases.nodes))
+        .then(data => this.saveUserList(data.data.currentUser.gamePurchases.nodes))
     },
     gameListFilter(game) { // Returns a comparison used for filtering
       const unplayedComparison = this.unplayedOnly && game.completionStatus != "UNPLAYED"
       const completedComparison = this.noCompleted && (game.completionStatus == "COMPLETED" || game.completionStatus == "FULLY_COMPLETED")
       return !(unplayedComparison || completedComparison)
     },
-    renderUserList(list) {
+    saveUserList(list) {
       this.gameList = list.map(function(item, index) {
         item.game.completionStatus = item.completionStatus
         item.game.index = index
@@ -250,6 +250,8 @@ function reduceToSize(size, list) {
 html {
   height: 100%;
 }
+
+/* Center everything */
 body {
   min-height: 100%;
   display: flex;
@@ -311,37 +313,5 @@ p, div, a {
     margin: auto;
     perspective: 500px;
   }
-}
-
-/* keyframes for animation;  simple 0 to 360 */
-@keyframes spin {
-	from { transform: rotate(0deg) scale(2); }
-	to { transform: rotate(360deg) scale(2); }
-}
-
-.rays	{ /* with animation properties */
-	background: url('./assets/rays-main.png') no-repeat center;
-  background-size: contain;
-	position: absolute;
-  z-index: -1;
-  height: 100%;
-  width: 100%;
-
-  animation-name: spin; 
-	animation-duration: 40000ms; /* 40 seconds */
-	animation-iteration-count: infinite; 
-	animation-timing-function: linear;
-}
-
-.fade-enter-active {
-  transition: all .6s ease-in
-}
-.fade-leave-active {
-  transition: all .3s ease-out;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
 }
 </style>
