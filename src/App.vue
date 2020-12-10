@@ -89,14 +89,12 @@ export default {
     return {
       client_id: 'zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE',
       accessToken: null,
+      windowWidth: window.innerWidth, // Just stores the current width
       gameList: [], // Contains all games, unfiltered
       rotateAngle: 0, // Angle to rotate
-      oddRotateNum: 0, // Used to include and exclude a rotation offset
-      windowWidth: window.innerWidth, // Just stores the current width
+      numberOfSpins: 0,
       showModal: false,
-      // These two things are distinct so the rays don't show up on page load
-      showRays: false, // Used for rays
-      isSpinning: false, // Used to set transition speed when spinning
+      showRays: false,
       // Filters
       speedy: false,
       unplayedOnly: false,
@@ -135,7 +133,7 @@ export default {
       return 'transform: translateZ('+ (-this.radius) +'px);'
     },
     rotateTime() {
-      return this.isSpinning ? (this.speedy ? 1 : 15) : 0
+      return !this.showRays && (this.numberOfSpins != 0) ? (this.speedy ? 1 : 15) : 0
     }
   },
   methods: {
@@ -218,18 +216,17 @@ export default {
     },
     pickRandom() {
       this.showRays = false
-      this.isSpinning = true
       
       var randomGame = this.filteredGameList[Math.floor(Math.random() * this.filteredGameList.length)];
       
       // The rotation offset spins it around a couple times
-      this.oddRotateNum = !this.oddRotateNum
-      this.rotateAngle = -((360*6*this.oddRotateNum) + (randomGame.index * this.angleDelta))
+      this.numberOfSpins += 1
+      let isOdd = this.numberOfSpins % 2
+      this.rotateAngle = -((360*6*isOdd) + (randomGame.index * this.angleDelta))
 
       window.setTimeout(this.setResult, this.rotateTime * 1000)
     },
     setResult() {
-      this.isSpinning = false
       this.showRays = true
     }
   }
