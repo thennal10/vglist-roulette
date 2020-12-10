@@ -1,7 +1,9 @@
 <template>
-  <label :for="id" :class="buttonClass" :style="additionalStyle"> {{text}} </label>
+  <button :class="buttonClass" :style="additionalStyle" :disabled="disabled">
+    <label :for="id"> {{text}} </label>
+  </button>
   <input type="checkbox" :id="id" :checked="checked"
-      @input="$emit('update:checked', $event.target.checked)" />
+      @input="$emit('update:checked', $event.target.checked)" :disabled="disabled"/>
 </template>
 
 <script>
@@ -12,6 +14,7 @@ export default {
     text: String,
     colorClass: String,
     checked: Boolean,
+    disabled: Boolean,
     endButton: {
       type: Boolean,
       default: false
@@ -31,5 +34,9 @@ export default {
 <style scoped>
 input {
   display: none;
+}
+
+button[disabled] > label {
+  cursor: not-allowed;
 }
 </style>

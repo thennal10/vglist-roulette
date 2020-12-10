@@ -2,13 +2,13 @@
 <p class="is-size-1 mb-6 has-text-white"><b>vg</b>list roulette</p>
 <div v-if="gameList.length" class="container">
   <Spinner v-if="filteredGameList.length" :renderList="filteredGameList" 
-    :speedy="speedy" ref="spinner" />
+    :speedy="speedy" @spinning="isSpinning = $event" ref="spinner" />
   <p v-else class="is-size-3 has-text-white">No games in your library match the filters currently activated :(</p>
   <div class="columns is-vcentered mt-6">
     <div class="column is-hidden-mobile">
       <div class="buttons has-addons is-right">
         <!-- Shut up, it's the cleanest way to force filteredGameList to recompute -->
-        <button class="button is-dark" 
+        <button :disabled="isSpinning" class="button is-dark" 
           @click="gameList.push(gameList[0]); gameList.pop()"
           >Get new set of games</button>
 
@@ -21,11 +21,11 @@
     </div>
 
     <div class="column is-2">
-      <button class="button is-danger is-large" @click="this.$refs.spinner.pickRandom"><b>SPIN</b></button>
+      <button :disabled="isSpinning" class="button is-danger is-large" @click="this.$refs.spinner.pickRandom"><b>SPIN</b></button>
     </div>
 
     <div class="column is-hidden-mobile">
-      <FiltersContainer :addons="true" v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
+      <FiltersContainer :disabled="isSpinning" :addons="true" v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
     </div>
   </div>
 </div>
@@ -82,6 +82,7 @@ export default {
       accessToken: null,
       gameList: [], // Contains all games, unfiltered
       showModal: false,
+      isSpinning: false,
       // Filters
       speedy: false,
       unplayedOnly: false,

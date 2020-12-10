@@ -58,6 +58,7 @@ export default {
   methods: {
     pickRandom() {
       this.showRays = false
+      this.$emit('spinning', true)
       
       var randomGame = this.renderList[Math.floor(Math.random() * this.renderList.length)];
       
@@ -70,6 +71,7 @@ export default {
     },
     setResult() {
       this.showRays = true
+      this.$emit('spinning', false)
     }
   }
 }
