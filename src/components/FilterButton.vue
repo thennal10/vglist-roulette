@@ -21,7 +21,7 @@ export default {
     buttonClass() {
       return `button is-${this.colorClass} ${this.checked ? '' : 'is-light'}`
     },
-    additionalStyle() {
+    additionalStyle() { // Because input at the end fucks with the has-addons class on the container
         return this.endButton ? 'border-bottom-right-radius: 4px; border-top-right-radius: 4px;': ''
     }
   }

@@ -1,5 +1,5 @@
 <template>
-<p class="title is-size-1 mb-6 has-text-white">vglist roulette</p>
+<p class="is-size-1 mb-6 has-text-white"><b>vg</b>list roulette</p>
 <div v-if="gameList.length" class="container">
   <div class="scene">
     <transition name="fade">
@@ -31,11 +31,7 @@
     </div>
 
     <div class="column is-hidden-mobile">
-      <div class="buttons has-addons is-left">
-        <FilterButton id="speedy-filter" text="Speed Up" colorClass="success" v-model:checked="speedy" />
-        <FilterButton id="unplayed-filter" text="Only Unplayed" colorClass="warning" v-model:checked="unplayedOnly" />
-        <FilterButton id="completed-filter" text="No Completed" colorClass="primary" v-model:checked="noCompleted" :endButton="true"/>
-      </div>
+      <FiltersContainer v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
     </div>
   </div>
 </div>
@@ -50,13 +46,13 @@
 
 <script>
 import GameItem from './components/GameItem.vue'
-import FilterButton from './components/FilterButton.vue'
+import FiltersContainer from './components/FiltersContainer.vue'
 
 export default {
   name: 'App',
   components: {
     GameItem,
-    FilterButton
+    FiltersContainer
   },
   created() {
     // If the list is already saved in memory
@@ -232,6 +228,8 @@ function reduceToSize(size, list) {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&display=swap');
+
 html {
   height: 100%;
 }
@@ -249,6 +247,9 @@ body {
   width: 100%;
 }
 
+p, div, a {
+  font-family: 'Zilla Slab', serif;
+}
 .gamesContainer {
   width: 100%;
   height: 100%;
