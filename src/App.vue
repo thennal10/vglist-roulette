@@ -5,11 +5,14 @@
   <div class="columns is-vcentered mt-6">
     <div class="column is-hidden-mobile">
       <div class="buttons has-addons is-right">
-        <a class="button">Get new set of games</a>
+        <!-- Shut up, it's the cleanest way to force filteredGameList to recompute -->
+        <button class="button is-dark" 
+          @click="gameList.push(gameList[0]); gameList.pop()"
+          >Get new set of games</button>
 
-        <a class="button">About</a>
+        <a class="button is-link">About</a>
 
-        <a class="button" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
+        <a class="button is-info" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
           Get List
         </a>
       </div>
@@ -212,7 +215,7 @@ body {
   width: 100%;
 }
 
-p, div, a {
+p, div, a, button {
   font-family: 'Zilla Slab', serif;
 }
 

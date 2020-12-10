@@ -1,4 +1,7 @@
-# random-vglist
+# Vglist Roulette
+
+Connor forced me to make this at gunpoint, so I have an excuse for the bad code.
+Did you know that CSS can natively render 3D objects? Because I sure didn't.
 
 ## Project setup
 ```
