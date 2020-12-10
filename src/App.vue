@@ -1,17 +1,8 @@
 <template>
 <p class="is-size-1 mb-6 has-text-white"><b>vg</b>list roulette</p>
 <div v-if="gameList.length" class="container">
-  <div class="scene">
-    <Rays :showRays="showRays" />
-    <div class="gamesContainer" :style='containerShift'>
-      <GameItem v-for="game in filteredGameList" :key="game.index" :index="game.index" :id="game.id" 
-        :name="game.name" :coverUrl="game.coverUrl" :totalGames="filteredGameList.length"
-        :radius="radius" :rotateAngle="rotateAngle" :rotateTime="rotateTime">
-      </GameItem>
-    </div>
-  </div>
-
-  <div class="controls columns is-vcentered mt-6">
+  <Spinner :renderList="filteredGameList" :speedy="speedy" ref="spinner" />
+  <div class="columns is-vcentered mt-6">
     <div class="column is-hidden-mobile">
       <div class="buttons has-addons is-right">
         <a class="button">Get new set of games</a>
@@ -25,7 +16,7 @@
     </div>
 
     <div class="column is-2">
-      <button class="button is-danger is-large" @click="pickRandom"><b>SPIN</b></button>
+      <button class="button is-danger is-large" @click="this.$refs.spinner.pickRandom"><b>SPIN</b></button>
     </div>
 
     <div class="column is-hidden-mobile">
@@ -49,7 +40,7 @@
 <div v-if="showModal" class="modal is-active">
   <div class="modal-background" @click="showModal = false"></div>
   <div class="modal-content box has-background-white">
-    <p class="subtitle">Filters:</p>
+    <p class="subtitle">Options:</p>
     <FiltersContainer :addons="false" v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
   </div>
   <button class="modal-close is-large" @click="showModal = false" aria-label="close"></button>
@@ -57,16 +48,14 @@
 </template>
 
 <script>
-import GameItem from './components/GameItem'
+import Spinner from './components/Spinner'
 import FiltersContainer from './components/FiltersContainer'
-import Rays from './components/Rays'
 
 export default {
   name: 'App',
   components: {
-    GameItem,
-    FiltersContainer,
-    Rays
+    Spinner,
+    FiltersContainer
   },
   created() {
     // If the list is already saved in memory
@@ -81,20 +70,13 @@ export default {
     } catch (e) {
       console.log("No authorization code found in url")
     }
-
-    // Updates window width on resize
-    window.addEventListener('resize', () => {this.windowWidth = window.innerWidth})
   },
   data() {
     return {
       client_id: 'zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE',
       accessToken: null,
-      windowWidth: window.innerWidth, // Just stores the current width
       gameList: [], // Contains all games, unfiltered
-      rotateAngle: 0, // Angle to rotate
-      numberOfSpins: 0,
       showModal: false,
-      showRays: false,
       // Filters
       speedy: false,
       unplayedOnly: false,
@@ -116,24 +98,6 @@ export default {
         game.index = index
       }
       return filteredList
-    },
-    gameSize() { // Half of actual size, set in scene
-      return this.windowWidth > 768 ? 200 : 100 
-    },
-    gameGap() { // Between two games
-      return this.windowWidth > 768 ? 30 : 10
-    },
-    angleDelta() {
-      return 360 / this.filteredGameList.length
-    },
-    radius() {
-      return (this.gameSize + this.gameGap) / Math.tan((Math.PI/180) * (this.angleDelta/2))
-    },
-    containerShift() {
-      return 'transform: translateZ('+ (-this.radius) +'px);'
-    },
-    rotateTime() {
-      return !this.showRays && (this.numberOfSpins != 0) ? (this.speedy ? 1 : 15) : 0
     }
   },
   methods: {
@@ -213,21 +177,6 @@ export default {
         return item.game
       })
       sessionStorage.setItem('gameList', JSON.stringify(this.gameList))
-    },
-    pickRandom() {
-      this.showRays = false
-      
-      var randomGame = this.filteredGameList[Math.floor(Math.random() * this.filteredGameList.length)];
-      
-      // The rotation offset spins it around a couple times
-      this.numberOfSpins += 1
-      let isOdd = this.numberOfSpins % 2
-      this.rotateAngle = -((360*6*isOdd) + (randomGame.index * this.angleDelta))
-
-      window.setTimeout(this.setResult, this.rotateTime * 1000)
-    },
-    setResult() {
-      this.showRays = true
     }
   }
 }
@@ -282,33 +231,5 @@ p, div, a {
 }
 .menu-icon > .line + .line {
     margin-top: 8px;
-}
-
-.gamesContainer {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  transform-style: preserve-3d;
-  transition: transform 1s;
-}
-
-@media (min-width: 768px) {
-  .scene {
-    position: relative;
-    width: 400px;
-    height: 400px;
-    margin: auto;
-    perspective: 500px;
-  }
-}
-
-@media (max-width: 768px) {
-  .scene {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    margin: auto;
-    perspective: 500px;
-  }
 }
 </style>
