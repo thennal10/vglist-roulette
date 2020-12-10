@@ -3,7 +3,7 @@
 <div v-if="gameList.length" class="container">
   <div class="scene">
     <transition name="fade">
-      <div v-if="resultShowing" class="rays"></div>
+      <div v-if="showRays" class="rays"></div>
     </transition>
     <div class="gamesContainer" :style='containerShift'>
       <GameItem v-for="game in filteredGameList" :key="game.index" :index="game.index" :id="game.id" 
@@ -31,10 +31,11 @@
     </div>
 
     <div class="column is-hidden-mobile">
-      <FiltersContainer v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
+      <FiltersContainer :addons="true" v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
     </div>
   </div>
 </div>
+
 <div v-else>
   <p class="title">Connect your vglist account, and spin the wheel!</p>
   <a class="button is-info is-light is-large" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
@@ -42,11 +43,24 @@
   </a>
 </div>
 
+<div class="menu-icon is-hidden-tablet" @click="showModal = true">
+  <span class="line"></span>
+  <span class="line"></span>
+  <span class="line"></span>
+</div>
+<div v-if="showModal" class="modal is-active">
+  <div class="modal-background" @click="showModal = false"></div>
+  <div class="modal-content box has-background-white">
+    <p class="subtitle">Filters:</p>
+    <FiltersContainer :addons="false" v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
+  </div>
+  <button class="modal-close is-large" @click="showModal = false" aria-label="close"></button>
+</div>
 </template>
 
 <script>
-import GameItem from './components/GameItem.vue'
-import FiltersContainer from './components/FiltersContainer.vue'
+import GameItem from './components/GameItem'
+import FiltersContainer from './components/FiltersContainer'
 
 export default {
   name: 'App',
@@ -79,8 +93,11 @@ export default {
       rotateAngle: 0, // Angle to rotate
       oddRotateNum: 0, // Used to include and exclude a rotation offset
       windowWidth: window.innerWidth, // Just stores the current width
-      resultShowing: false,
-      spinning: false,
+      showModal: false,
+      // These two things are distinct so the rays don't show up on page load
+      showRays: false, // Used for rays
+      isSpinning: false, // Used to set transition speed when spinning
+      // Filters
       speedy: false,
       unplayedOnly: false,
       noCompleted: false
@@ -118,7 +135,7 @@ export default {
       return 'transform: translateZ('+ (-this.radius) +'px);'
     },
     rotateTime() {
-      return this.spinning ? (this.speedy ? 1 : 15) : 0
+      return this.isSpinning ? (this.speedy ? 1 : 15) : 0
     }
   },
   methods: {
@@ -200,8 +217,8 @@ export default {
       sessionStorage.setItem('gameList', JSON.stringify(this.gameList))
     },
     pickRandom() {
-      this.resultShowing = false
-      this.spinning = true
+      this.showRays = false
+      this.isSpinning = true
       
       var randomGame = this.filteredGameList[Math.floor(Math.random() * this.filteredGameList.length)];
       
@@ -212,8 +229,8 @@ export default {
       window.setTimeout(this.setResult, this.rotateTime * 1000)
     },
     setResult() {
-      this.spinning = false
-      this.resultShowing = true
+      this.isSpinning = false
+      this.showRays = true
     }
   }
 }
@@ -250,6 +267,24 @@ body {
 p, div, a {
   font-family: 'Zilla Slab', serif;
 }
+
+.menu-icon {
+  height: 32px;
+  width: 32px;
+  position: fixed;
+  right: 10px;
+  top: 10px;
+}
+
+.menu-icon > .line {
+    background-color: white;
+    height: 3px;
+    display: block;
+}
+.menu-icon > .line + .line {
+    margin-top: 8px;
+}
+
 .gamesContainer {
   width: 100%;
   height: 100%;
