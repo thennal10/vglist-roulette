@@ -12,7 +12,7 @@
           @click="gameList.push(gameList[0]); gameList.pop()"
           >Get new set of games</button>
 
-        <a class="button is-link">About</a>
+        <a class="button is-link" href="https://github.com/thennal10/vglist-roulette">About</a>
 
         <a class="button is-info" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://thennal10.github.io/vglist-roulette&response_type=code`">
           Get List
