@@ -12,7 +12,7 @@
 
         <a class="button is-link">About</a>
 
-        <a class="button is-info" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
+        <a class="button is-info" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://thennal10.github.io/vglist-roulette&response_type=code`">
           Get List
         </a>
       </div>
@@ -30,7 +30,7 @@
 
 <div v-else>
   <p class="title">Connect your vglist account, and spin the wheel!</p>
-  <a class="button is-info is-light is-large" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://tolocalhost.com&response_type=code`">
+  <a class="button is-info is-light is-large" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://thennal10.github.io/vglist-roulette&response_type=code`">
     <strong>Connect</strong>
   </a>
 </div>
@@ -76,7 +76,7 @@ export default {
   },
   data() {
     return {
-      client_id: 'zLV--juCNrcmhgrWKMU7-Im0_PndSrqbOrp63I1D8jE',
+      client_id: 'L386b78YE2Xp0XcPLo51KtzTMHatcA7O4R-h4yHLb7g',
       accessToken: null,
       gameList: [], // Contains all games, unfiltered
       showModal: false,
@@ -115,7 +115,7 @@ export default {
             grant_type: 'authorization_code',
             client_id: this.client_id,
             code: authorizationCode,
-            redirect_uri: 'https://tolocalhost.com'
+            redirect_uri: 'https://thennal10.github.io/vglist-roulette'
           })
         }
 
