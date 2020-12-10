@@ -26,8 +26,8 @@
       </div>
     </div>
 
-    <div class="column is-1">
-      <button class="button is-info is-large" @click="pickRandom">SPIN</button>
+    <div class="column is-2">
+      <button class="button is-danger is-large" @click="pickRandom"><b>SPIN</b></button>
     </div>
 
     <div class="column is-hidden-mobile">
