@@ -7,7 +7,7 @@
 
     <a class="button is-link" href="https://github.com/thennal10/vglist-roulette">About</a>
 
-    <a class="button is-info" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://thennal10.github.io/vglist-roulette&response_type=code`">
+    <a class="button is-info" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`">
       Reset list
     </a>
   </div>
@@ -17,7 +17,10 @@
 export default {
   name: 'MiscButtons',
   props: {
-    addons: Boolean
+    addons: Boolean,
+    isSpinning: Boolean,
+    client_id: String,
+    redirect_uri: String
   }
 }
 </script>
