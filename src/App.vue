@@ -6,18 +6,7 @@
   <p v-else class="is-size-3 has-text-white">No games in your library match the filters currently activated :(</p>
   <div class="columns is-vcentered mt-6">
     <div class="column is-hidden-mobile">
-      <div class="buttons has-addons is-right">
-        <!-- Shut up, it's the cleanest way to force filteredGameList to recompute -->
-        <button :disabled="isSpinning" class="button is-dark" 
-          @click="gameList.push(gameList[0]); gameList.pop()"
-          >Get new set of games</button>
-
-        <a class="button is-link" href="https://github.com/thennal10/vglist-roulette">About</a>
-
-        <a class="button is-info" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://thennal10.github.io/vglist-roulette&response_type=code`">
-          Get List
-        </a>
-      </div>
+      <MiscButtons :addons="true"/>
     </div>
 
     <div class="column is-2">
@@ -46,7 +35,9 @@
   <div class="modal-background" @click="showModal = false"></div>
   <div class="modal-content box has-background-white">
     <p class="subtitle">Options:</p>
-    <FiltersContainer :addons="false" v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
+    <FiltersContainer :disabled="isSpinning" :addons="false" v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
+    <p class="subtitle">Misc:</p>
+    <MiscButtons :addons="false"/>
   </div>
   <button class="modal-close is-large" @click="showModal = false" aria-label="close"></button>
 </div>
@@ -55,12 +46,14 @@
 <script>
 import Spinner from './components/Spinner'
 import FiltersContainer from './components/FiltersContainer'
+import MiscButtons from './components/MiscButtons'
 
 export default {
   name: 'App',
   components: {
     Spinner,
-    FiltersContainer
+    FiltersContainer,
+    MiscButtons
   },
   created() {
     // If the list is already saved in memory
