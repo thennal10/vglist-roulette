@@ -209,6 +209,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden; /* Because touch devices need this, for some reason */
   background: rgb(198,195,249);
   background: linear-gradient(60deg, rgba(198,195,249,1) 40%, rgba(35,182,255,1) 80%);
 }
