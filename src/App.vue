@@ -32,7 +32,7 @@
 
 <div v-else>
   <p class="title">Connect your vglist account, and spin the wheel!</p>
-  <a class="button is-info is-light is-large" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=https://thennal10.github.io/vglist-roulette&response_type=code`">
+  <a class="button is-info is-light is-large" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`">
     <strong>Connect</strong>
   </a>
 </div>
@@ -79,6 +79,7 @@ export default {
   data() {
     return {
       client_id: 'L386b78YE2Xp0XcPLo51KtzTMHatcA7O4R-h4yHLb7g',
+      redirect_uri: 'https://thennal10.github.io/vglist-roulette',
       accessToken: null,
       gameList: [], // Contains all games, unfiltered
       showModal: false,
@@ -118,7 +119,7 @@ export default {
             grant_type: 'authorization_code',
             client_id: this.client_id,
             code: authorizationCode,
-            redirect_uri: 'https://thennal10.github.io/vglist-roulette'
+            redirect_uri: this.redirect_uri
           })
         }
 
