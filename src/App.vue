@@ -19,13 +19,15 @@
   </div>
 </div>
 
+<Loading v-else-if="showLoading === true"/>
+
 <div v-else>
-  <p class="title">Connect your vglist account, and spin the wheel!</p>
+  <p v-if="showLoading === null" class="title">Connect your vglist account, and spin the wheel!</p>
+  <p v-if="showLoading === false" class="title">Invalid authorization code, please try again.</p>
   <a class="button is-info is-light is-large" :href="`https://vglist.co/settings/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`">
     <strong>Connect</strong>
   </a>
 </div>
-
 <div class="menu-icon is-hidden-tablet" @click="showModal = true">
   <span class="line"></span>
   <span class="line"></span>
@@ -47,13 +49,15 @@
 import Spinner from './components/Spinner'
 import FiltersContainer from './components/FiltersContainer'
 import MiscButtons from './components/MiscButtons'
+import Loading from './components/Loading'
 
 export default {
   name: 'App',
   components: {
     Spinner,
     FiltersContainer,
-    MiscButtons
+    MiscButtons,
+    Loading
   },
   created() {
     // If the list is already saved in memory
@@ -64,6 +68,7 @@ export default {
     // Get auth code from url if available
     try {
       var authorizationCode = window.location.href.match(/code=(.*)/)[1]
+      this.showLoading = true
       this.getAccessToken(authorizationCode)
     } catch (e) {
       console.log("No authorization code found in url")
@@ -73,6 +78,7 @@ export default {
     return {
       client_id: 'L386b78YE2Xp0XcPLo51KtzTMHatcA7O4R-h4yHLb7g',
       redirect_uri: 'https://thennal10.github.io/vglist-roulette',
+      showLoading: null,
       accessToken: null,
       gameList: [], // Contains all games, unfiltered
       showModal: false,
@@ -126,6 +132,7 @@ export default {
         this.getUserList()
       }
       else {
+        this.showLoading = false
         console.log("Invalid authorization token")
       }
     },
