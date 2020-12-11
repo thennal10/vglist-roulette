@@ -1,5 +1,5 @@
 <template>
-  <div :class="`buttons ${addons ? 'has-addons is-left': ''}`">
+  <div :class="`buttons ${addons ? 'has-addons is-left': 'is-centered'}`">
     <FilterButton id="speedy-filter" text="Speed Up" colorClass="success" 
         @update:checked="$emit('update:speedy', $event)" 
         :checked="speedy" :disabled="disabled" />
