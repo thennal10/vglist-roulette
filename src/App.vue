@@ -6,7 +6,7 @@
   <p v-else class="is-size-3 has-text-white">No games in your library match the filters currently activated :(</p>
   <div class="columns is-vcentered mt-6">
     <div class="column is-hidden-mobile">
-      <MiscButtons :addons="true"/>
+      <MiscButtons :addons="true" :isSpinning="isSpinning" :client_id="client_id" :redirect_uri="redirect_uri"/>
     </div>
 
     <div class="column is-2">
@@ -37,7 +37,7 @@
     <p class="subtitle">Options:</p>
     <FiltersContainer :disabled="isSpinning" :addons="false" v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
     <p class="subtitle">Misc:</p>
-    <MiscButtons :addons="false"/>
+    <MiscButtons :addons="false" :isSpinning="isSpinning" :client_id="client_id" :redirect_uri="redirect_uri"/>
   </div>
   <button class="modal-close is-large" @click="showModal = false" aria-label="close"></button>
 </div>
