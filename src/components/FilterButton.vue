@@ -36,6 +36,10 @@ input {
   display: none;
 }
 
+label {
+  cursor: pointer;
+}
+
 button[disabled] > label {
   cursor: not-allowed;
 }
