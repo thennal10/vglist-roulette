@@ -138,11 +138,15 @@ export default {
         console.log("Invalid authorization token")
       }
     },
-    getUserList() {
+    getUserList(startCursor="") {
       var query = `
-        query { 
+        query ($startCursor: String) { 
           currentUser {
-            gamePurchases {
+            gamePurchases (after: $startCursor){
+              pageInfo {
+                endCursor
+                hasNextPage
+              }
               nodes {
                 game {
                   id
@@ -155,7 +159,7 @@ export default {
           }
         }
       `
-
+      var variables = {startCursor: startCursor}
       var url = 'https://vglist.co/graphql',
         options = {
           method: 'POST',
@@ -165,14 +169,24 @@ export default {
             'Accept': 'application/json',
           },
           body: JSON.stringify({
-            query: query
+            query: query,
+            variables: variables
           })
       }
 
       // Make the HTTP Api request
       fetch(url, options)
         .then(response => response.json())
-        .then(data => this.saveUserList(data.data.currentUser.gamePurchases.nodes))
+        .then(data => this.chainQuery(data.data.currentUser.gamePurchases))
+    },
+    chainQuery(data) {
+      this.gameList.push(...data.nodes) // temp storage, saveUserList will map it properly
+      if (data.pageInfo.hasNextPage) {
+        this.getUserList(data.pageInfo.endCursor)
+      }
+      else {
+        this.saveUserList(this.gameList)
+      }
     },
     gameListFilter(game) { // Returns a comparison used for filtering
       const unplayedComparison = this.unplayedOnly && game.completionStatus != "UNPLAYED"
