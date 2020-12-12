@@ -160,7 +160,7 @@ export default {
         options = {
           method: 'POST',
           headers: {
-            'Authorization': 'Bearer ' + this.accessToken,
+            'Authorization': `Bearer ${this.accessToken}`,
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
