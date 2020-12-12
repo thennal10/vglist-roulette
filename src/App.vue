@@ -6,7 +6,8 @@
   <p v-else class="is-size-3 has-text-white">No games in your library match the filters currently activated :(</p>
   <div class="columns is-vcentered mt-6">
     <div class="column is-hidden-mobile">
-      <MiscButtons :addons="true" :isSpinning="isSpinning" :client_id="client_id" :redirect_uri="redirect_uri"/>
+      <MiscButtons :addons="true" :isSpinning="isSpinning" 
+        :client_id="client_id" :redirect_uri="redirect_uri" @recompute="recomputeFilteredGameList"/>
     </div>
 
     <div class="column is-2">
@@ -39,7 +40,8 @@
     <p class="subtitle">Options:</p>
     <FiltersContainer :disabled="isSpinning" :addons="false" v-model:speedy="speedy" v-model:unplayedOnly="unplayedOnly" v-model:noCompleted="noCompleted" />
     <p class="subtitle">Misc:</p>
-    <MiscButtons :addons="false" :isSpinning="isSpinning" :client_id="client_id" :redirect_uri="redirect_uri"/>
+    <MiscButtons :addons="false" :isSpinning="isSpinning" 
+      :client_id="client_id" :redirect_uri="redirect_uri" @recompute="recomputeFilteredGameList"/>
   </div>
   <button class="modal-close is-large" @click="showModal = false" aria-label="close"></button>
 </div>
@@ -184,6 +186,12 @@ export default {
         return item.game
       })
       sessionStorage.setItem('gameList', JSON.stringify(this.gameList))
+    },
+    recomputeFilteredGameList() {
+      // Just forces the computed property to recompute
+      // There isn't a clean way of doing this without reorganizing the entire thing
+      this.unplayedOnly = !this.unplayedOnly
+      this.unplayedOnly = !this.unplayedOnly
     }
   }
 }

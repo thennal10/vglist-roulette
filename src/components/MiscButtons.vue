@@ -1,7 +1,7 @@
 <template>
   <div :class="`buttons ${addons ? 'has-addons is-right': 'is-centered'}`">
     <button :disabled="isSpinning" class="button is-dark" 
-      @click="gameList.push(gameList[0]); gameList.pop()"
+      @click="$emit('recompute')"
       >Get new set of games
     </button>
 
