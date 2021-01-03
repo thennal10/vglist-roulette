@@ -142,7 +142,7 @@ export default {
       var query = `
         query ($startCursor: String) { 
           currentUser {
-            gamePurchases (after: $startCursor){
+            gamePurchases (after: $startCursor) {
               pageInfo {
                 endCursor
                 hasNextPage
@@ -151,7 +151,7 @@ export default {
                 game {
                   id
                   name
-                  coverUrl
+                  coverUrl(size: LARGE)
                 }
                 completionStatus
               }

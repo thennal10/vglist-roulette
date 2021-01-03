@@ -4,7 +4,7 @@
       <div class="title-container" :style="coverUrl ? 'opacity: 0' : 'opacity: 1'">
         <p class="is-size-2 has-text-white"><strong>{{name}}</strong></p>
       </div>
-      <img v-if="coverUrl" :src="'https://vglist.co' + coverUrl">
+      <img v-if="coverUrl" :src="coverUrl">
     </a>
   </div>
 </template>
@@ -28,7 +28,7 @@ export default {
     },
     style () {
       return `transform: rotateY(${this.angle + this.rotateAngle}deg) translateZ(${this.radius}px);
-        transition: transform ${this.rotateTime }s cubic-bezier(.2,-0.05,0,1);`
+        transition: transform ${this.rotateTime}s cubic-bezier(.2,-0.05,0,1);`
         //'background : hsla(' + this.angle + ', 100%, 50%, 0.8)'
     }
   }
@@ -54,7 +54,7 @@ export default {
     transform: scale3d(1.1, 1.1, 1.1);
   }
 
-  a:hover img{
+  a:hover img {
     filter: brightness(0.5);
   }
 
